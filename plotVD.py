@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from math import *
 
 
-
-
 def calSpeed(L1,L2):   #计算速度 分别为前后两帧图像
 	speed=0
 	count=0
@@ -26,7 +24,7 @@ def select(L,store,sameL):  #选择出规定区域
 			L.append(i)
 #			print(i)
 	count=1
-	for ii in range(2957):
+	for ii in range(totalFrames):
 		sameL.append([])
 		for i in L:
 			if i[0]==count:
@@ -40,14 +38,12 @@ def select(L,store,sameL):  #选择出规定区域
 #当中帧根据当前帧前后两帧位移，计算速度；
 #端点帧，根据最近帧位移，计算速度
 def calSpeed2(store,index):
-	previousFrame = store[index-1]
-	nextFrame = store[index+1]
-	if previousFrame[1]==previousFrame[1] :
-		return (sqrt((previousFrame[2]-nextFrame[2])**2+(previousFrame[3]-nextFrame[3])**2))*2/25
-	elif previousFrame[1]==store[index][1]:
-		return (sqrt((previousFrame[2]-store[index])**2+(previousFrame[3]-store[index])**2))*1/25
-	elif nextFrame[1]==store[index][1]:
-		return (sqrt((nextFrame[2]-store[index])**2+(nextFrame[3]-store[index])**2))*1/25
+	if store[index][1] == 0:
+		return (sqrt((store[index+1][2]-store[index][2])**2+(store[index+1][3]-store[index][3])**2))/(1/25)/100
+	elif store[index][1]  == totalFrames:
+		return (sqrt((store[index-1][2]-store[index][2])**2+(store[index-1][3]-store[index][3])**2))/(1/25)/100
+	else:
+		return (sqrt((store[index-1][2]-store[index+1][2])**2+(store[index-1][3]-store[index+1][3])**2))/(2/25)/100
 
 def select2(L,store,sameL):  #选择出规定区域
 	for index,i in enumerate(store):
@@ -55,7 +51,7 @@ def select2(L,store,sameL):  #选择出规定区域
 			i.append(calSpeed2(store,index))
 			L.append(i)
 #			print(i)
-	for frameNum in range(2957):
+	for frameNum in range(totalFrames):
 		sameL.append([])
 		for i in L:
 	 		if i[1]==frameNum:
@@ -66,6 +62,7 @@ def select2(L,store,sameL):  #选择出规定区域
 
 f=open('1_v2.txt')
 store=[]
+totalFrames = 0
 for index,i in enumerate(f):
 	#print(i)
 	store.append(i.strip().split(' '))
@@ -73,6 +70,7 @@ for index,i in enumerate(f):
 	store[index][3]=float(store[index][3])
 	store[index][1]=int(store[index][1])
 	store[index][0]=int(store[index][0])
+	totalFrames=max(totalFrames,store[index][1])
 # store=[]
 def check(L):
 	for i in L:
@@ -82,52 +80,29 @@ def check(L):
 L=[]
 sameL=[]
 L,sameL=select2(L,store,sameL)
-#check(sameL)
+check(sameL)
 
 #print(len(sameL))
 speed={} #速度和
 desnity={} #人数和
 for index,someL in enumerate(sameL):
 #	print(index,len(someL),someL)
-	if len(someL) not in desnity.keys():
-		desnity[len(someL)] = 0
-	if len(someL) not in speed.keys():
-		speed[len(someL)] = 0
-	desnity[len(someL)]+=len(someL)
-	for data in someL:
-		speed[len(someL)]+=data[5]
+	count = len(someL)
+	if(count>0):
+		if count not in desnity.keys():
+			desnity[count] = 0
+		if count not in speed.keys():
+			speed[count] = 0
+		desnity[count]+=count
+		for data in someL:
+			print(data[5],speed[count])
+			speed[count]+=data[5]
 
 avgSpeed={}
 for k in speed.keys():
+	print(k,speed[k],desnity[k])
 	avgSpeed[k]=speed[k]/desnity[k]
-print(avgSpeed)
+# #print(avgSpeed)
 plt.scatter([float(k) for k in avgSpeed.keys()],[float(v) for v in avgSpeed.values()])
 plt.show()
-	# 	print(index,len(data),data)
-
-# if index+25<len(sameL):
-# 	desnity.append(len(i))
-# 	speed.append(calSpeed(i,sameL[index+25]))
 	
-# print(len(desnity),len(speed))
-# print(speed)
-# plt.scatter(desnity,speed)
-# plt.show()
-
-# data = pd.read_table('1_v2.txt',header=None,delim_whitespace=True,index_col=0)
-# sampledata = data[(data[2]>=0) & (data[2]<=100) & (data[3]>=0) & (data[3] <= 100)]
-
-# framedata=[]
-# for frameindex in range(2957):
-# 	framedata.append([])
-# 	framedata[frameindex] = sampledata[(sampledata[1] == frameindex)]
-# print(framedata[2847])
-
-
-
-
-
-
-
-
-#data.describe()
