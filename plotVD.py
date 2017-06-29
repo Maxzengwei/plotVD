@@ -78,26 +78,6 @@ def check(L):
 	for i in L:
 		print(i)
 
-# for i in range(237):
-# 	store.append([])
-# lis=[]
-
-# count=0
-# for i in L:
-	# if(i[1]==2957):
-		# count=count+1
-	# store[count].append(i)
-# count=0
-# for i in len(store):
-	# for ii in i:
-		# count=count+1
-		
-#plt.scatter(len(store),ii)
-#plt.scatter
-
-#for i in store:
-#	if i[0]==i:
-
 #main_procedure
 L=[]
 sameL=[]
@@ -105,8 +85,8 @@ L,sameL=select2(L,store,sameL)
 #check(sameL)
 
 #print(len(sameL))
-speed={}
-desnity={}
+speed={} #速度和
+desnity={} #人数和
 for index,someL in enumerate(sameL):
 #	print(index,len(someL),someL)
 	if len(someL) not in desnity.keys():
